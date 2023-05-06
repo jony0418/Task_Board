@@ -13,6 +13,8 @@ columns.forEach(column => {
     column.addEventListener("drop", dragDrop);
 });
 
+loadBoardState();
+
 function dragStart(e) {
     e.dataTransfer.setData("text/plain", e.target.id);
     setTimeout(() => e.target.classList.add("hidden"), 0);
@@ -44,5 +46,34 @@ function dragDrop(e) {
     if (e.target.classList.contains("column")) {
         e.target.appendChild(issue);
         e.target.classList.remove("hovered");
+        saveBoardState();
+    }
+}
+
+function saveBoardState() {
+    const boardState = {};
+    columns.forEach(column => {
+        const columnId = column.id;
+        const issueIds = Array.from(column.children)
+            .filter(child => child.classList.contains("issue"))
+            .map(issue => issue.id);
+        boardState[columnId] = issueIds;
+    });
+    localStorage.setItem("boardState", JSON.stringify(boardState));
+}
+
+function loadBoardState() {
+    const savedState = localStorage.getItem("boardState");
+    if (savedState) {
+        const boardState = JSON.parse(savedState);
+        Object.keys(boardState).forEach(columnId => {
+            const column = document.getElementById(columnId);
+            boardState[columnId].forEach(issueId => {
+                const issue = document.getElementById(issueId);
+                if (issue && column) {
+                    column.appendChild(issue);
+                }
+            });
+        });
     }
 }
