@@ -27,16 +27,22 @@ function dragOver(e) {
 }
 
 function dragEnter(e) {
-    e.target.classList.add("hovered");
+    if (e.target.classList.contains("column")) {
+        e.target.classList.add("hovered");
+    }
 }
 
 function dragLeave(e) {
-    e.target.classList.remove("hovered");
+    if (e.target.classList.contains("column")) {
+        e.target.classList.remove("hovered");
+    }
 }
 
 function dragDrop(e) {
     const id = e.dataTransfer.getData("text");
     const issue = document.getElementById(id);
-    e.target.appendChild(issue);
-    e.target.classList.remove("hovered");
+    if (e.target.classList.contains("column")) {
+        e.target.appendChild(issue);
+        e.target.classList.remove("hovered");
+    }
 }
